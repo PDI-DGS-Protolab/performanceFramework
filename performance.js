@@ -8,6 +8,7 @@
 
 var sender = require('./sender');
 
+var number_scenarios = 0;
 var webSocket;
 
 var receiveMessage = sender.receiveMessage;
@@ -21,23 +22,15 @@ sender.createSocket(8090, function (socket) {
 
 var describe = function (name, axes, hosts, funtest) {
     'use strict'
+    var test_id = number_scenarios++;
     createAndLaunchAgents(hosts);
-    
-
-
-    switch (axes.length) {
-        case 3:    // 3d
-            break;
-        case 2:     // 2d
-            break;
-        case 0:        //  whithout graphic
-            break;
-        default:
-            break;
-    }
-
-    funtest();
-}
+    sendMessage(webSocket, 'newScenario', {id: test_id, name: name, type: axes.length, axes: axes});
+    receiveMessage(webSocket, 'newTest', function (req) {
+        if (req.id === test_id) {
+            funtest();
+        }
+    });
+};
 
 var createAndLaunchAgents = function (hosts) {
     'use strict';
