@@ -55,3 +55,18 @@ var createAndLaunchAgents = function (hosts) {
         }.bind({}, client));
     }
 };
+
+var test=function(callback){
+
+    var log=function(name){
+      //sendMessage(webSocket, 'newLog', {name: name, id:hh});
+
+    };
+
+    var points=function (x,y,z){
+
+
+    }
+
+    callback(log,points);
+};
