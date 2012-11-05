@@ -20,14 +20,27 @@ sender.createSocket(8090, function (socket) {
     exports.webSocket = webSocket;
 });
 
-var describe = function (name, axes, hosts, funtest) {
+var describe = function (name, description, axes, hosts, funtest) {
     'use strict'
-    var test_id = number_scenarios++;
-    createAndLaunchAgents(hosts);
-    sendMessage(webSocket, 'newScenario', {id: test_id, name: name, type: axes.length, axes: axes});
+    this.test_id = number_scenarios++;
+    createAndLaunchAgents(test_id, hosts);
+    sendMessage(webSocket, 'newScenario', {id: test_id, name: name, description: description, type: axes.length, axes: axes});
+};
+
+describe.prototype.test = function (callback) {
+    var id = this.test_id;
+
+    var log = function (log) {
+        sendMessage(webSocket, 'endLog', {host: benchmark.nameHost[auxHost], time: nowToString, message: log});
+    };
+
+    var points = function (x, y, z) {
+
+
+    };
     receiveMessage(webSocket, 'newTest', function (req) {
-        if (req.id === test_id) {
-            funtest();
+        if (req.id === id) {
+            callback(log, points);
         }
     });
 };
@@ -54,19 +67,4 @@ var createAndLaunchAgents = function (hosts) {
 
         }.bind({}, client));
     }
-};
-
-var test=function(callback){
-
-    var log=function(name){
-      //sendMessage(webSocket, 'newLog', {name: name, id:hh});
-
-    };
-
-    var points=function (x,y,z){
-
-
-    }
-
-    callback(log,points);
 };
