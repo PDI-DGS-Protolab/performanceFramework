@@ -7,6 +7,7 @@
  */
 
 var sender = require('./sender');
+var net = require('net');
 
 var number_scenarios = 0;
 var webSocket;
@@ -23,11 +24,11 @@ sender.createSocket(8090, function (socket) {
 var describe = function (name, description, axes, hosts, funtest) {
     'use strict'
     this.test_id = number_scenarios++;
-    createAndLaunchAgents(test_id, hosts);
+    createAndLaunchMonitors(this.test_id, hosts);
     sendMessage(webSocket, 'newScenario', {id: test_id, name: name, description: description, type: axes.length, axes: axes});
 };
 
-describe.prototype.test = function (callback) {
+var test = describe.prototype.test = function (callback) {
     var id = this.test_id;
 
     var log = function (log) {
@@ -45,7 +46,7 @@ describe.prototype.test = function (callback) {
     });
 };
 
-var createAndLaunchAgents = function (hosts) {
+var createAndLaunchMonitors = function (id, hosts) {
     'use strict';
     var hostsRec = 0, i = 0, client;
 
@@ -61,10 +62,13 @@ var createAndLaunchAgents = function (hosts) {
 
                 var JSONdata = JSON.parse(validData);
 
-                sendMessage(webSocket, 'cpu', {host: JSONdata.host, cpu: JSONdata.cpu.percentage});
-                sendMessage(webSocket, 'memory', {host: JSONdata.host, memory: parseInt(JSONdata.memory.value)});
+                sendMessage(webSocket, 'cpu', {id : id, host: JSONdata.host, cpu: JSONdata.cpu.percentage});
+                sendMessage(webSocket, 'memory', {id : id, host: JSONdata.host, memory: parseInt(JSONdata.memory.value)});
             });
 
         }.bind({}, client));
     }
 };
+
+module.exports = describe;
+module.exports = test;
