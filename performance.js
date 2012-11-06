@@ -31,12 +31,16 @@ describe.prototype.test = function (callback) {
     var id = this.test_id;
 
     var log = function (log) {
-        sendMessage(webSocket, 'endLog', {host: benchmark.nameHost[auxHost], time: nowToString, message: log});
+        var now = new Date();
+        var nowToString = now.toTimeString().slice(0, 8);
+        sender.sendMessage(webSocket, 'endLog', {id:id, time: nowToString, message: log});
     };
 
     var points = function (x, y, z) {
-
-
+        var now = new Date();
+        var nowToString = now.toTimeString().slice(0, 8);
+        var data={time: nowToString, message: {id: id, point: [x, y, z]}, version: version};
+        sendMessage(webSocket, 'newPoint', data);
     };
     receiveMessage(webSocket, 'newTest', function (req) {
         if (req.id === id) {
