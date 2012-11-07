@@ -6,91 +6,106 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var sender = require('./sender');
 var net = require('net');
+var fs = require('fs');
+var ejs = require('ejs');
 
 var number_scenarios = 0;
 var webSocket;
 
-var receiveMessage = sender.receiveMessage;
-var sendMessage = sender.sendMessage;
-
-var performance = function (connected) {
-    sender.createSocket(8090, function (socket) {
-        'use strict';
-        webSocket = socket;
-        connected();
-    });
-};
-
 var test = function (callback) {
     var id = this.test_id;
+    var points = this.points;
+    var logs = this.logs;
 
     var log = function (log) {
         var now = new Date();
         var nowToString = now.toTimeString().slice(0, 8);
-        sender.sendMessage(webSocket, 'endLog', {id: id, time: nowToString, message: log});
+
+        //sender.sendMessage(webSocket, 'endLog', {id: id, time: nowToString, message: log});
+
+        logs.push({time: nowToString, message: log});
+
     };
 
-    var points = function (x, y, z) {
+    var point = function (x, y) {
         var now = new Date();
         var nowToString = now.toTimeString().slice(0, 8);
-        var data = {time: nowToString, message: {id: id, point: [x, y, z]}, version: 0};
-        sendMessage(webSocket, 'newPoint', data);
+        //var data = {time: nowToString, message: {id: id, point: arrayPoints}, version: 0};
+        var p = [x,y];
+        points.push(p);
+
     };
-    receiveMessage(webSocket, 'newTest', function (req) {
-        if (req.id === id) {
-            callback(log, points);
-        }
-    });
-    callback(log, points);
+    callback(log, point);
 };
 
+var done = function () {
+    var axes = this.axes;
+    var name = this.name;
+    var points = this.points;
+    var logs = this.logs;
+    var description = this.description;
+    console.log(points);
+    fs.readFile('./log/template.ejs', function (err, data) {
+        if (!err) {
+            var html = ejs.render(data.toString(), {
+                name: name,
+                description: description,
+                logs: logs,
+                Xaxis: axes[0],
+                Yaxis: axes[1],
+                points: points
+            });
+            console.log(html);
+        }
+    });
+};
 var Describe = function (name, description, axes, hosts) {
     'use strict'
     this.test_id = number_scenarios++;
+    this.name = name;
+    this.description = description;
+    this.axes = axes;
+
     this.test = test;
-    createAndLaunchMonitors(this.test_id, hosts);
-    sendMessage(webSocket, 'newScenario', {id: this.test_id, name: name, description: description, type: axes.length, axes: axes});
+    this.done = done;
+    this.logs = [];
+    this.points=[];
+    //createAndLaunchMonitors(this.test_id, hosts);
 };
 
-var createAndLaunchMonitors = function (id, hosts) {
-    'use strict';
-    var hostsRec = 0, i = 0, client;
+/*var createAndLaunchMonitors = function (id, hosts) {
+ 'use strict';
+ var hostsRec = 0, i = 0, client;
 
-    for (i = 0; i < hosts.length; i++) {
-        var host = hosts[i].host;
-        var port = hosts[i].port;
-        var client = new net.Socket();
-        client.connect(port, host, function (client) {
-            client.on('data', function (data) {
+ for (i = 0; i < hosts.length; i++) {
+ var host = hosts[i];
+ var client = new net.Socket();
+ client.connect(8091, host, function (client) {
+ client.on('data', function (data) {
 
-                var splitted = data.toString().split('\n');
-                var validData = splitted[splitted.length - 2];
+ var splitted = data.toString().split('\n');
+ var validData = splitted[splitted.length - 2];
 
-                var JSONdata = JSON.parse(validData);
+ var JSONdata = JSON.parse(validData);
 
-                sendMessage(webSocket, 'cpu', {id: id, host: JSONdata.host, cpu: JSONdata.cpu.percentage});
-                sendMessage(webSocket, 'memory', {id: id, host: JSONdata.host, memory: parseInt(JSONdata.memory.value)});
-            });
+ sendMessage(webSocket, 'cpu', {id: id, host: JSONdata.host, cpu: JSONdata.cpu.percentage});
+ sendMessage(webSocket, 'memory', {id: id, host: JSONdata.host, memory: parseInt(JSONdata.memory.value)});
+ });
 
-        }.bind({}, client));
+ }.bind({}, client));
 
-        client.on('error', function (err) {
-            console.log(err);
-        });
-    }
-};
-performance(function () {
-
-    var Scenario1 = new Describe("hola", "hola", ['x', 'y'], [
-        {host: 'localhost', port: 8091}
-    ]);
-    Scenario1.test(function (log,points) {
-        points(1,2);
-        log('Holaaa');
-    });
+ client.on('error', function (err) {
+ console.log(err);
+ });
+ }
+ };*/
+var Scenario1 = new Describe("hola", "hola", ['X', 'Y'], ['localhost']);
+Scenario1.test(function (log, point) {
+    point(6, 2);
+    log('Holaaa');
 });
+Scenario1.done();
 
 module.exports = Describe;
 module.exports = test;
