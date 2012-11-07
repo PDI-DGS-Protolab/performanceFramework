@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= name %></title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+        tbody { height: 50px !important; overflow-y: auto;}
+    </style>
+</head>
+<body>
+<br/>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span10 offset1">
+            <div class="row-fluid">
+                <div class="span7">
+                    <!-- Main hero unit for a primary marketing message or call to action -->
+                    <div class="hero-unit">
+                        <div id="container" style="height: 500px"></div>
+                    </div>
+                    <div class="hero-unit">
+                        <h2>Log</h2>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Message</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% for(var i=0; i<logs.length; i++) {%>
+                            <tr>
+                                <td><%= logs[i].time %></td>
+                                <td><%= logs[i].message %></td>
+                            </tr>
+                            <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                <div class="span5">
+                    <div class="hero-unit">
+                        <h1>Hello, world!</h1>
+
+                        <p>This is a template for a simple marketing or informational website. It includes a large
+                            callout
+                            called
+                            the hero unit and three supporting pieces of content. Use it as a starting point to create
+                            something
+                            more unique.</p>
+
+                        <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+                    </div>
+                </div>
+            </div>
+            <hr>
+
+            <footer>
+                <p>&copy; Company 2012</p>
+            </footer>
+        </div>
+    </div>
+</div>
+
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/flotr2.min.js"></script>
+<script type="text/javascript">
+    var container = document.getElementById("container"),
+            d1 = [[0, 3], [4, 8], [8, 5], [9, 13], [12, -3], [16, 8], [20, 0]], // data series
+            graph;
+
+    graph = Flotr.draw(container, [
+        { data: d1, lines: { show: true }, points: { show: true } }
+    ], {
+        title: '<%= name %>',
+        xaxis: {
+            minorTickFreq: 4,
+            title: '<%= Yaxis %>'
+        },
+        yaxis: {
+            title: '<%= Xaxis %>'
+        },
+        grid: {
+            minorVerticalLines: true
+        },
+        mouse : {
+            track : true,
+            relative : true
+        }
+    });
+
+    graph.download.saveImage('png');
+
+    /*(function basic(container) {
+
+
+     graph;
+
+     // Draw Graph
+     graph = Flotr.draw(container, [ d1 ], {
+     title: "EXAMPLE!",
+     xaxis: {
+     minorTickFreq: 4
+     },
+     grid: {
+     minorVerticalLines: true
+     }
+     });
+     })(document.getElementById("container"));*/
+</script>
+
+</body>
+</html>

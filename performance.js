@@ -88,6 +88,7 @@ performance(function () {
     ]);
     Scenario1.test(function (log,points) {
         points(1,2);
+        log('Holaaa');
     });
 });
 
