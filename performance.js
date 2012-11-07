@@ -15,32 +15,27 @@ var webSocket;
 var receiveMessage = sender.receiveMessage;
 var sendMessage = sender.sendMessage;
 
-sender.createSocket(8090, function (socket) {
-    'use strict';
-    webSocket = socket;
-    exports.webSocket = webSocket;
-});
-
-var describe = function (name, description, axes, hosts, funtest) {
-    'use strict'
-    this.test_id = number_scenarios++;
-    createAndLaunchMonitors(this.test_id, hosts);
-    sendMessage(webSocket, 'newScenario', {id: test_id, name: name, description: description, type: axes.length, axes: axes});
+var performance = function (connected) {
+    sender.createSocket(8090, function (socket) {
+        'use strict';
+        webSocket = socket;
+        connected();
+    });
 };
 
-var test = describe.prototype.test = function (callback) {
+var test = function (callback) {
     var id = this.test_id;
 
     var log = function (log) {
         var now = new Date();
         var nowToString = now.toTimeString().slice(0, 8);
-        sender.sendMessage(webSocket, 'endLog', {id:id, time: nowToString, message: log});
+        sender.sendMessage(webSocket, 'endLog', {id: id, time: nowToString, message: log});
     };
 
     var points = function (x, y, z) {
         var now = new Date();
         var nowToString = now.toTimeString().slice(0, 8);
-        var data={time: nowToString, message: {id: id, point: [x, y, z]}, version: version};
+        var data = {time: nowToString, message: {id: id, point: [x, y, z]}, version: 0};
         sendMessage(webSocket, 'newPoint', data);
     };
     receiveMessage(webSocket, 'newTest', function (req) {
@@ -48,6 +43,15 @@ var test = describe.prototype.test = function (callback) {
             callback(log, points);
         }
     });
+    callback(log, points);
+};
+
+var Describe = function (name, description, axes, hosts) {
+    'use strict'
+    this.test_id = number_scenarios++;
+    this.test = test;
+    createAndLaunchMonitors(this.test_id, hosts);
+    sendMessage(webSocket, 'newScenario', {id: this.test_id, name: name, description: description, type: axes.length, axes: axes});
 };
 
 var createAndLaunchMonitors = function (id, hosts) {
@@ -66,13 +70,26 @@ var createAndLaunchMonitors = function (id, hosts) {
 
                 var JSONdata = JSON.parse(validData);
 
-                sendMessage(webSocket, 'cpu', {id : id, host: JSONdata.host, cpu: JSONdata.cpu.percentage});
-                sendMessage(webSocket, 'memory', {id : id, host: JSONdata.host, memory: parseInt(JSONdata.memory.value)});
+                sendMessage(webSocket, 'cpu', {id: id, host: JSONdata.host, cpu: JSONdata.cpu.percentage});
+                sendMessage(webSocket, 'memory', {id: id, host: JSONdata.host, memory: parseInt(JSONdata.memory.value)});
             });
 
         }.bind({}, client));
+
+        client.on('error', function (err) {
+            console.log(err);
+        });
     }
 };
+performance(function () {
 
-module.exports = describe;
+    var Scenario1 = new Describe("hola", "hola", ['x', 'y'], [
+        {host: 'localhost', port: 8091}
+    ]);
+    Scenario1.test(function (log,points) {
+        points(1,2);
+    });
+});
+
+module.exports = Describe;
 module.exports = test;
