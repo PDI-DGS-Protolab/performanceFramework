@@ -110,8 +110,11 @@ var createAndLaunchMonitors = function (hosts) {
 
                 //sendMessage(webSocket, 'cpu', {id:id, host:JSONdata.host, cpu:JSONdata.cpu.percentage});
                 //sendMessage(webSocket, 'memory', {id:id, host:JSONdata.host, memory:parseInt(JSONdata.memory.value)});
-                CPU.push({host:JSONdata.host, cpu:JSONdata.cpu.percentage});
-                memory.push({host:JSONdata.host, memory:parseInt(JSONdata.memory.value)});
+
+                var now = new Date();
+                //var nowToString = now.toTimeString().slice(0, 8);
+                CPU.push({time:now,host:JSONdata.host,name:JSONdata.name, cpu:JSONdata.cpu.percentage});
+                memory.push({time:now,host:JSONdata.host,name:JSONdata.name, memory:parseInt(JSONdata.memory.value)});
             });
 
         }.bind({}, client));
