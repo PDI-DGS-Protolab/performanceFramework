@@ -5,6 +5,7 @@ var os = require('os');
 var cluster = require('cluster');
 
 var paths = new Array();
+var names = new Array();
 
 for(var i = 2; i < process.argv.length; i++){
     paths.push(process.argv[i]);
@@ -12,7 +13,7 @@ for(var i = 2; i < process.argv.length; i++){
 
 paths = paths.sort();
 
-var names = splitAndName(paths);
+names = splitAndName(paths);
 
 server = net.createServer(function (connection) {
 
@@ -74,7 +75,7 @@ var createAgent = function (path) {
     return pid;
 }
 
-var splitAndName = function(programs){
+function splitAndName(programs){
 
     var listRes = new Array();
 
