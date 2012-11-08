@@ -45,7 +45,7 @@ var done = function () {
     var points = this.points;
     var logs = this.logs;
     var description = this.description;
-    console.log(points);
+    var path=this.path;
     fs.readFile('./log/template.ejs', function (err, data) {
         if (!err) {
             var html = ejs.render(data.toString(), {
@@ -56,17 +56,33 @@ var done = function () {
                 Yaxis: axes[1],
                 points: points
             });
-            console.log(html);
+
+
+     var now = new Date();
+     var nowToString = now.toTimeString().slice(0, 8);
+     var file=  name + '-' + nowToString+'.html';
+     file=path+'/'+file;
+     fs.writeFile(file,html, function(err) {
+                if(err) {
+                    console.log(err);
+                } else {
+                    console.log('The file '+ file +' was saved');
+                }
+            });
+
+
+
+
         }
     });
 };
-var Describe = function (name, description, axes, hosts) {
+var Describe = function (name, description, axes, hosts,path) {
     'use strict'
     this.test_id = number_scenarios++;
     this.name = name;
     this.description = description;
     this.axes = axes;
-
+    this.path=path;
     this.test = test;
     this.done = done;
     this.logs = [];
@@ -100,7 +116,7 @@ var Describe = function (name, description, axes, hosts) {
  });
  }
  };*/
-var Scenario1 = new Describe("hola", "hola", ['X', 'Y'], ['localhost']);
+var Scenario1 = new Describe("hola", "hola", ['X', 'Y'], ['localhost'],'../');
 Scenario1.test(function (log, point) {
     point(6, 2);
     log('Holaaa');
