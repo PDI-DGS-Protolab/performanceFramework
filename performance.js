@@ -96,7 +96,7 @@ var Describe = function (name, description, axes, hosts, path) {
 
 var createAndLaunchMonitors = function (hosts) {
     'use strict';
-    var hostsRec = 0, i = 0, client;
+    var i = 0, client;
 
     for (i = 0; i < hosts.length; i++) {
         var host = hosts[i];
