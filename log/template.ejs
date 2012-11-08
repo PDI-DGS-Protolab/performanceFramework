@@ -5,11 +5,18 @@
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
     <style type="text/css">
-        tbody { height: 50px !important; overflow-y: auto;}
+        div.scrollable {
+            height: 160px !important;
+            with : 100%;
+            overflow-y: scroll;
+            overflow-wrap: break-word
+        }
+
     </style>
 </head>
 <body>
 <br/>
+
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span10 offset1">
@@ -21,6 +28,7 @@
                     </div>
                     <div class="hero-unit">
                         <h2>Log</h2>
+                        <div class="scrollable">
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -29,7 +37,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <% for(var i=0; i<logs.length; i++) {%>
+                            <% for(var i=0; i < logs.length; i++) {%>
                             <tr>
                                 <td><%= logs[i].time %></td>
                                 <td><%= logs[i].message %></td>
@@ -37,20 +45,23 @@
                             <% } %>
                             </tbody>
                         </table>
+                            </div>
                     </div>
-                    </div>
+                </div>
                 <div class="span5">
                     <div class="hero-unit">
-                        <h1>Hello, world!</h1>
+                        <h1><%= name %></h1>
 
-                        <p>This is a template for a simple marketing or informational website. It includes a large
-                            callout
-                            called
-                            the hero unit and three supporting pieces of content. Use it as a starting point to create
-                            something
-                            more unique.</p>
+                        <p><%= description %></p>
 
-                        <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+                    </div>
+                    <div class="hero-unit">
+                        <div class="container-fluid">
+                            <h1>CPU</h1>
+                            <div id="containerCPU" style="height: 300px;"></div>
+                            <h1>MEM</h1>
+                            <div id="containerMEM"  style="height: 300px;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -67,11 +78,15 @@
 <script src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/flotr2.min.js"></script>
 <script type="text/javascript">
-    var container = document.getElementById("container"),
-            d1 = [[0, 3], [4, 8], [8, 5], [9, 13], [12, -3], [16, 8], [20, 0]], // data series
-            graph;
+    var container = document.getElementById("container");
+    var d1 = [];
+    var data = <%-points %>;
+    for (var i = 0; i < data.length; i++) {
+        var point = data[i];
+        d1.push([point.x, point.y]);
+    }
 
-    graph = Flotr.draw(container, [
+    var graph = Flotr.draw(container, [
         { data: d1, lines: { show: true }, points: { show: true } }
     ], {
         title: '<%= name %>',
@@ -85,30 +100,103 @@
         grid: {
             minorVerticalLines: true
         },
-        mouse : {
-            track : true,
-            relative : true
+        mouse: {
+            track: true,
+            relative: true
         }
     });
 
     graph.download.saveImage('png');
+</script>
+<script type="text/javascript">
+    var containerCPU = document.getElementById("containerCPU"),
+            containerMEM = document.getElementById("containerMEM"),
+            downloadCPU = document.getElementById("downloadCPU"),
+            downloadMEM = document.getElementById("downloadMEM"),
+            d1 = [[0, 3], [4, 8], [8, 5], [9, 13], [12, -3], [16, 8], [20, 0]], // data series
+            graphCPU;
 
-    /*(function basic(container) {
+    var displayGraph = function(data, title, xaxisTitle, yaxisTitle, container, downloadButton) {
+        var options, graph;
+
+        options = {
+            title: title,
+            xaxis: {
+                min: 0,
+                max: 10,
+                minorTickFreq: 4,
+                title: xaxisTitle
+            },
+            yaxis: {
+                minorTickFreq: 4,
+                title: yaxisTitle,
+            },
+            grid: {
+                minorVerticalLines: true
+            },
+            mouse : {
+                track : true,
+                relative : true
+            },
+            HtmlText: false,
+            legend: {
+                position: 'nw'
+            }
+        };
+        graph = drawGraph(container);
+
+        // Draw graph with default options, overwriting with passed options
+        function drawGraph (container, opts) {
+
+            // Clone the options, so the 'options' variable always keeps intact.
+            var o = Flotr._.extend(Flotr._.clone(options), opts || {});
+
+            // Return a new graph.
+            return Flotr.draw(container, [
+                { data: data, lines: { show: true }, points: { show: true } }
+            ], o);
+        }
+
+        function initializeDrag (e) {
+            start = graph.getEventPosition(e);
+            Flotr.EventAdapter.observe(document, 'mousemove', move);
+            Flotr.EventAdapter.observe(document, 'mouseup', stopDrag);
+        }
+
+        function move (e) {
+            var
+                    end     = graph.getEventPosition(e),
+                    xaxis   = graph.axes.x,
+                    offset  = start.x - end.x;
+
+            graph = drawGraph(container, {
+                xaxis : {
+                    min : xaxis.min + offset,
+                    max : xaxis.max + offset,
+                    minorTickFreq: 4,
+                    title: xaxisTitle
+                }
+            });
+
+            // @todo: refector initEvents in order not to remove other observed events
+            Flotr.EventAdapter.observe(graph.overlay, 'mousedown', initializeDrag);
+        }
+
+        function stopDrag () {
+            Flotr.EventAdapter.stopObserving(document, 'mousemove', move);
+        }
+
+        Flotr.EventAdapter.observe(graph.overlay, 'mousedown', initializeDrag);
+
+        if (downloadButton) {
+            downloadButton.onclick = function() { graph.download.saveImage('png'); };
+        }
+    }
+
+    displayGraph(d1, 'CPU Graph', 'Time', 'Percentage', containerCPU, downloadCPU);
+    displayGraph(d1, 'MEM Graph', 'Time', 'Percentage', containerMEM, downloadMEM);
 
 
-     graph;
-
-     // Draw Graph
-     graph = Flotr.draw(container, [ d1 ], {
-     title: "EXAMPLE!",
-     xaxis: {
-     minorTickFreq: 4
-     },
-     grid: {
-     minorVerticalLines: true
-     }
-     });
-     })(document.getElementById("container"));*/
 </script>
 
 </body>
