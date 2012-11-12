@@ -1,15 +1,15 @@
-performanceFramework
-====================
+Performance Framework
+=====================
 
 ##Description
 ###Simple framework for a benchmark test
 
-Generate your html with the result of a benchmark test, with graphs of CPU and memory and an additional graph 
-and log that can be customized.
-The log is a simple table that contains the phrases that you introduced.
-The additional graph is printed with the  points [x,y] that you can choose who's "X" and who's "Y" 
-(Example: "X" can be the number of clients of a server and "Y" can be TPS).
-* NOTE: You can download all graphs generated on ".png" extension and log on ".txt" extension
+This framework generates a html with the result of a benchmark test, including gCPU and memory graphs and an additional 
+graph that can be customized depending on your test.
+The log is a simple table that contains the sentences that tests have generated.
+The additional graph is a 2D graph where you can choose the meaning of X and Y.
+(Example: "X" can be the number of clients of a server and "Y" can be the number of transactions per second).
+* NOTE: You can download all graphs generated on PNG file and log on TXT file.
 
 ##How to use
 
@@ -18,13 +18,11 @@ There are two options to use the framework:
 
 ###With Monitor:
 
-A monitor.js (performanceFramework/monitor.js) must be run in the same host where you want to run the program to test it.
-monitor.js receives arguments that indicate a paths of the programs to run.
-If you run with this option, it can generate the CPU and memory graphs (monitor.js sends this data to performance.js that
-print it in the correspondig graph).
-If you have more than one of programs to test, in the CPU and memory graphs you can see with different color each program.
-
+monitor.js (performanceFramework/monitor.js) must be run in the host where you execute the program to test.
+monitor.js must receive as arguments the path of the programs to test and it will execute them. 
+Using this option, CPU and memory graphs will be generated automatically (monitor.js will generate this data). 
+If you have more than one program to test, the CPU and memory of each one will be represented with different colours.
 
 ###Without Monitor:
 
-That option only can print the customize graph and log.
+That option can only generate the customize graph and log.
