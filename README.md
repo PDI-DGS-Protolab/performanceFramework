@@ -9,7 +9,7 @@ graph that can be customized depending on your test.
 The log is a simple table that contains the sentences that tests have generated.
 The additional graph is a 2D graph where you can choose the meaning of X and Y.
 (Example: "X" can be the number of clients of a server and "Y" can be the number of transactions per second).
-* NOTE: You can download all graphs generated on PNG file and log on TXT file.
+* NOTE: You can download all graphs generated on different PNG files and log on a TXT file.
 
 ##How to use
 
