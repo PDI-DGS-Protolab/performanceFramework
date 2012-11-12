@@ -12,8 +12,6 @@ var ejs = require('ejs');
 
 var number_scenarios = 0;
 var webSocket;
-var CPU=[];
-var memory=[];
 
 var test = function (callback) {
     var id = this.test_id;
@@ -27,7 +25,7 @@ var test = function (callback) {
 
         //sender.sendMessage(webSocket, 'endLog', {id: id, time: nowToString, message: log});
 
-        logs.push({time:nowToString, message:log});
+        logs.push({time: nowToString, message: log});
 
     };
 
@@ -35,7 +33,7 @@ var test = function (callback) {
         var now = new Date();
         var nowToString = now.toTimeString().slice(0, 8);
         //var data = {time: nowToString, message: {id: id, point: arrayPoints}, version: 0};
-        var p = [x, y];
+        var p = {x: x, y: y};
         points.push(p);
 
     };
@@ -49,18 +47,25 @@ var done = function () {
     var logs = this.logs;
     var description = this.description;
     var path = this.path;
+    var CPU_Mem = this.CPU_Mem;
+    var memory = this.memory;
+    var start = this.start;
+    var end = new Date();
     fs.readFile('./log/template.ejs', function (err, data) {
         if (!err) {
+            console.log(JSON.stringify(CPU_Mem));
             var html = ejs.render(data.toString(), {
-                name:name,
-                description:description,
-                logs:logs,
-                Xaxis:axes[0],
-                Yaxis:axes[1],
-                points:points,
-                CPU: CPU,
-                memory: memory
-            });
+                name: name,
+                description: description,
+                logs: logs,
+                Xaxis: axes[0],
+                Yaxis: axes[1],
+                points: JSON.stringify(points),
+                CPU_Mem: JSON.stringify(CPU_Mem),
+                start : start.toTimeString().slice(0, 8),
+                end : end.toTimeString().slice(0, 8)
+
+        });
 
 
             var now = new Date();
@@ -90,14 +95,18 @@ var Describe = function (name, description, axes, hosts, path) {
     this.done = done;
     this.logs = [];
     this.points = [];
-    createAndLaunchMonitors(hosts);
+    this.CPU_Mem = {};
+    this.createAndLaunchMonitors = createAndLaunchMonitors;
+    this.start = new Date();
+    this.createAndLaunchMonitors(hosts);
 };
 
 
 var createAndLaunchMonitors = function (hosts) {
     'use strict';
     var i = 0, client;
-
+    var CPU_Mem = this.CPU_Mem;
+    var start = this.start;
     for (i = 0; i < hosts.length; i++) {
         var host = hosts[i];
         var client = new net.Socket();
@@ -107,14 +116,18 @@ var createAndLaunchMonitors = function (hosts) {
                 var splitted = data.toString().split('\n');
                 var validData = splitted[splitted.length - 2];
                 var JSONdata = JSON.parse(validData);
+                console.log(JSONdata);
 
                 //sendMessage(webSocket, 'cpu', {id:id, host:JSONdata.host, cpu:JSONdata.cpu.percentage});
                 //sendMessage(webSocket, 'memory', {id:id, host:JSONdata.host, memory:parseInt(JSONdata.memory.value)});
 
-                var now = new Date();
+                //var now = (new Date().valueOf()) - start.valueOf();
                 //var nowToString = now.toTimeString().slice(0, 8);
-                CPU.push({time:now,host:JSONdata.host,name:JSONdata.name, cpu:JSONdata.cpu.percentage});
-                memory.push({time:now,host:JSONdata.host,name:JSONdata.name, memory:parseInt(JSONdata.memory.value)});
+                var id = JSONdata.host + JSONdata.name;
+                if (!(CPU_Mem.hasOwnProperty(id))) {
+                    CPU_Mem[id] = [];
+                }
+                CPU_Mem[id].push({host: JSONdata.host, name: JSONdata.name, cpu: JSONdata.cpu.percentage, memory: parseInt(JSONdata.memory.value)});
             });
 
         }.bind({}, client));
@@ -126,12 +139,14 @@ var createAndLaunchMonitors = function (hosts) {
 };
 
 
-var Scenario1 = new Describe("hola", "hola", ['X', 'Y'], ['localhost'], '../');
+var Scenario1 = new Describe("hola", "hola", ['X', 'Y'], ['localhost'], 'log');
 Scenario1.test(function (log, point) {
     point(6, 2);
     log('Holaaa');
 });
-Scenario1.done();
+setTimeout(function () {
+    Scenario1.done();
+}, 5000);
 
 module.exports = Describe;
 module.exports = test;
