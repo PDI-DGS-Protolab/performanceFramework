@@ -53,11 +53,11 @@ var done = function () {
     var end = new Date();
     fs.readFile('./log/template.ejs', function (err, data) {
         if (!err) {
-            console.log(JSON.stringify(CPU_Mem));
             var html = ejs.render(data.toString(), {
                 name: name,
                 description: description,
-                logs: logs,
+                logs1: logs,
+                logs2: JSON.stringify(logs),
                 Xaxis: axes[0],
                 Yaxis: axes[1],
                 points: JSON.stringify(points),
@@ -83,6 +83,10 @@ var done = function () {
 
         }
     });
+    for (var i=0; i<this.clients.length; i++){
+        this.clients[i].removeAllListeners();
+        this.clients[i].end();
+    }
 };
 var Describe = function (name, description, axes, hosts, path) {
     'use strict'
@@ -98,18 +102,20 @@ var Describe = function (name, description, axes, hosts, path) {
     this.CPU_Mem = {};
     this.createAndLaunchMonitors = createAndLaunchMonitors;
     this.start = new Date();
-    this.createAndLaunchMonitors(hosts);
+    this.clients = [];
+    this.createAndLaunchMonitors(hosts, this.clients);
 };
 
 
-var createAndLaunchMonitors = function (hosts) {
+var createAndLaunchMonitors = function (hosts, clients) {
     'use strict';
-    var i = 0, client;
+    var i = 0;
     var CPU_Mem = this.CPU_Mem;
     var start = this.start;
     for (i = 0; i < hosts.length; i++) {
         var host = hosts[i];
         var client = new net.Socket();
+        clients.push(client);
         client.connect(8091, host, function (client) {
             client.on('data', function (data) {
 
@@ -118,11 +124,6 @@ var createAndLaunchMonitors = function (hosts) {
                 var JSONdata = JSON.parse(validData);
                 console.log(JSONdata);
 
-                //sendMessage(webSocket, 'cpu', {id:id, host:JSONdata.host, cpu:JSONdata.cpu.percentage});
-                //sendMessage(webSocket, 'memory', {id:id, host:JSONdata.host, memory:parseInt(JSONdata.memory.value)});
-
-                //var now = (new Date().valueOf()) - start.valueOf();
-                //var nowToString = now.toTimeString().slice(0, 8);
                 var id = JSONdata.host + JSONdata.name;
                 if (!(CPU_Mem.hasOwnProperty(id))) {
                     CPU_Mem[id] = [];
@@ -139,14 +140,14 @@ var createAndLaunchMonitors = function (hosts) {
 };
 
 
-var Scenario1 = new Describe("hola", "hola", ['X', 'Y'], ['localhost'], 'log');
+var Scenario1 = new Describe("Scenario1", "This test determines the time taken by the system to provision X inboxes with messages of Z KB. When the test is finished, the following message will be shown: 'X inboxes have been provisioned with a Z KBytes payload in Y seconds with no errors' (maxProvision.js)", ['X', 'Y'], ['localhost'], 'log');
 Scenario1.test(function (log, point) {
     point(6, 2);
     log('Holaaa');
 });
 setTimeout(function () {
     Scenario1.done();
-}, 5000);
+}, 10000);
 
 module.exports = Describe;
 module.exports = test;
