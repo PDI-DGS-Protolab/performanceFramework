@@ -107,7 +107,23 @@ var Describe = function (name, description, axes, hosts, path) {
     this.CPU_Mem = {};
     this.createAndLaunchMonitors(hosts, this.clients);
    }
-
+    try {
+        var stats = fs.lstatSync(path);
+        if (!stats.isDirectory()) {
+            console.log('Can\'t create directory ' + path + ' :the file exists');
+            process.exit();
+        }
+    } catch (e) {
+        var directories=path.split('/');
+         var aux='';
+         for (var i=0;i<directories.length;i++){
+              if (directories[i]!==''){
+                  aux+=directories[i]+'/';
+                 fs.mkdir(aux);
+              }
+         }
+        console.log('The directory ' + aux + ' has been created');
+    }
 };
 
 
@@ -143,4 +159,9 @@ var createAndLaunchMonitors = function (hosts, clients) {
     }
 };
 
-module.exports = Describe;
+var describe = function (name, description, axes, hosts, path) {
+    return new  Describe(name, description, axes, hosts, path);
+}
+
+
+module.exports = describe;
