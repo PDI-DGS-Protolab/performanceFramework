@@ -99,11 +99,15 @@ var Describe = function (name, description, axes, hosts, path) {
     this.done = done;
     this.logs = [];
     this.points = [];
-    this.CPU_Mem = {};
     this.createAndLaunchMonitors = createAndLaunchMonitors;
     this.start = new Date();
     this.clients = [];
+
+   if (hosts.length!==0)  {
+    this.CPU_Mem = {};
     this.createAndLaunchMonitors(hosts, this.clients);
+   }
+
 };
 
 
