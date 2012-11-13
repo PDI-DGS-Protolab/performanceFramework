@@ -51,7 +51,7 @@ var done = function () {
     var memory = this.memory;
     var start = this.start;
     var end = new Date();
-    fs.readFile('./log/template.ejs', function (err, data) {
+    fs.readFile('template.ejs', function (err, data) {
         if (!err) {
             var html = ejs.render(data.toString(), {
                 name: name,
@@ -139,15 +139,4 @@ var createAndLaunchMonitors = function (hosts, clients) {
     }
 };
 
-
-var Scenario1 = new Describe("Scenario1", "This test determines the time taken by the system to provision X inboxes with messages of Z KB. When the test is finished, the following message will be shown: 'X inboxes have been provisioned with a Z KBytes payload in Y seconds with no errors' (maxProvision.js)", ['X', 'Y'], ['localhost'], 'log');
-Scenario1.test(function (log, point) {
-    point(6, 2);
-    log('Holaaa');
-});
-setTimeout(function () {
-    Scenario1.done();
-}, 10000);
-
 module.exports = Describe;
-module.exports = test;

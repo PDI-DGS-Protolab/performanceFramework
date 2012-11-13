@@ -16,7 +16,7 @@
         },
         {
             "name": "David Barriga",
-            "email": "dbarrigam@conwet.com"
+            "email": "dbarriga@conwet.com"
         },
         {
             "name": "Aitor Magan",
@@ -29,8 +29,8 @@
     },
     "main": "./performance.js",
     "dependencies": {
-        "socketio" : "0.9.10"
-    },
+        "ejs" : "0.8.3"
+},
     "license": "AGPL",
     "engine": {
         "node": "0.6.6"

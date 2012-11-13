@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Performance framework - <%= name %></title>
     <!-- Bootstrap -->
@@ -44,7 +44,7 @@
             <div class="row-fluid">
                 <div class="span7">
                     <div class="hero-unit">
-                        <div id="container" style="height: 500px"></div>
+                        <div id="container" style="height: 400px"></div>
                         <button type="button" class="btn btn-primary" id="downloadGraph">Download</button>
                     </div>
                     <div class="hero-unit">
@@ -75,6 +75,8 @@
                             </tbody>
                         </table>
                             </div>
+                        <br/>
+                        <button type="button" class="btn btn-primary" onclick="downloadLog()">Download</button>
                     </div>
                 </div>
                 <div class="span5">
@@ -86,22 +88,37 @@
                     </div>
                     <div class="hero-unit">
                         <div class="container-fluid">
-                            <h1>CPU</h1>
-                            <button type="button" class="btn btn-primary" id="downloadCPU">Download</button>
-                            <div id="containerCPU" style="height: 300px;"></div>
-                            <h1>MEM</h1>
-                            <button type="button" class="btn btn-primary" id="downloadMEM">Download</button>
-                            <div id="containerMEM"  style="height: 300px;"></div>
+                            <table style="width: 100%">
+                                <tr>
+                                <td>
+                                    <h1>CPU</h1>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary pull-right" id="downloadCPU">Download</button>
+                                </td>
+                                </tr>
+                                </table>
+                            <div id="containerCPU" style="height: 200px;"></div>
+                            <table style="width: 100%">
+                                <tr>
+                                    <td>
+                                        <h1>MEM</h1>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary pull-right" id="downloadMEM">Download</button>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div id="containerMEM"  style="height: 200px;"></div>
                         </div>
                     </div>
-                </div>
+                    </div>
             </div>
             <hr>
-
             <footer>
                 <p>&copy; Conwet - Telefonica I+D 2012</p>
             </footer>
-        </div>
+            </div>
     </div>
 </div>
 <script type="text/javascript" src="https://raw.github.com/HumbleSoftware/Flotr2/master/flotr2.min.js"></script>
@@ -110,6 +127,16 @@
     logs.push({time : "<%= start %>", message : "Test starts"});
     logs = logs.concat(<%- logs2 %>);
     logs.push({time : "<%= end %>", message : "Test ends"});
+
+    function downloadLog() {
+        var logTXT = '';
+
+        for (var i = 0; i < logs.length; i++) {
+            logTXT += logs[i].time + '\t' + logs[i].message + '\n';
+        }
+
+        window.open('data:download/plain;charset=utf-8,' + encodeURI(logTXT), '_blank');
+    }
 </script>
 <script type="text/javascript">
     var container = document.getElementById("container");
