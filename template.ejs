@@ -318,8 +318,8 @@
         persCPU.push({ name: hostAndName, data: cpu });
         persMem.push({ name: hostAndName, data: mem });
     }
-    displayGraph(persCPU, 'CPU Graph', 'Time', 'Percentage', containerCPU, downloadCPU);
-    displayGraph(persMem, 'MEM Graph', 'Time', 'MB', containerMEM, downloadMEM);
+    displayGraph(persCPU, 'CPU Graph', 'Time', 'Percentage', 0, 100, containerCPU, downloadCPU);
+    displayGraph(persMem, 'MEM Graph', 'Time', 'MB', null, null, containerMEM, downloadMEM);
         <% } %>
 
 </script>
