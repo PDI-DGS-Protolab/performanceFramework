@@ -5,15 +5,16 @@ var os = require('os');
 var cluster = require('cluster');
 
 var paths = new Array();
-var names = new Array();
 
-for(var i = 2; i < process.argv.length; i++){
+for (var i = 2; i < process.argv.length; i++) {
     paths.push(process.argv[i]);
 }
 
 paths = paths.sort();
 
+var names = [];
 names = splitAndName(paths);
+console.log(names[0]);
 
 server = net.createServer(function (connection) {
 
@@ -24,7 +25,6 @@ server = net.createServer(function (connection) {
     if (server.connections === 1) {
 
         console.log('Client open the connection...');
-        connection.write(JSON.stringify({id:1, host:os.hostname()}) + '\n');
 
         for (var i = 0; i < paths.length; i++) {
             var aux = new Array()
@@ -38,32 +38,36 @@ server = net.createServer(function (connection) {
             }, 1000);
         }
 
-    //Monitoring an agent sending the client information about the usage of CPU and RAM
-    monitorInterval = setInterval(function () {
-        for(var i = 0; i < pids.length; i++){
-            var res = utils.monitor(pids[i], function (res) {
-                console.log('CPU: ' + res.cpu + ' - Memory: ' + res.memory);
-                connection.write(JSON.stringify({id:2, host:os.hostname(), name:names[i], cpu:{percentage:res.cpu}, memory:{value:res.memory}}) + '\n');
-            });
-        }
-    }, 500);
+        //Monitoring an agent sending the client information about the usage of CPU and RAM
+        monitorInterval = setInterval(function () {
+            for (var i = 0; i < pids.length; i++) {
+                function iterate(i) {
+                    var res = utils.monitor(pids[i], function (res) {
+                        console.log('CPU: ' + res.cpu + ' - Memory: ' + res.memory);
+                        console.log(names[0]);
+                        connection.write(JSON.stringify({host: os.hostname(), name: names[i], cpu: {percentage: res.cpu}, memory: {value: res.memory}}) + '\n');
+                    });
+                }
+                iterate(i);
+            }
+        }, 500);
 
-    /*connection.on('data', function(data){
-     config.tranRedisServer = JSON.parse(data);
-     });*/
+        /*connection.on('data', function(data){
+         config.tranRedisServer = JSON.parse(data);
+         });*/
 
-    connection.on('end', function () {
-        console.log('Client closed connection...');
-        clearInterval(monitorInterval);
-        process.kill(pid);
-        connection.end();
+        connection.on('end', function () {
+            console.log('Client closed connection...');
+            clearInterval(monitorInterval);
+            process.kill(pid);
+            connection.end();
 
-    });
+        });
 
-} else {
+    } else {
         connection.end();
     }
-}).listen(8091)
+}).listen(8091);
 
 /**
  * Creates an agent
@@ -75,13 +79,13 @@ var createAgent = function (path) {
     return pid;
 }
 
-function splitAndName(programs){
+function splitAndName(programs) {
 
-    var listRes = new Array();
+    var listRes = [];
 
-    for(var i = 0; i < programs.length; i++){
+    for (var i = 0; i < programs.length; i++) {
         var elems = programs[i].split('/');
-        elems = elems[elems.length-1].split('.');
+        elems = elems[elems.length - 1].split('.');
         var res = elems[0];
         listRes.push(res);
     }
@@ -90,21 +94,19 @@ function splitAndName(programs){
     var aux = listRes[1];
     var cont = 1;
 
-    for (var i = 0; i< listRes.length; i++){
-        console.log(cont);
-        if(aux === listRes[i]){
-            console.log('entra');
+    for (var i = 0; i < listRes.length; i++) {
+        if (aux === listRes[i]) {
             listRes[i] = listRes[i] + cont.toString();
             cont++;
         }
-        else{
+        else {
             cont = 1;
             aux = listRes[i];
             listRes[i] = listRes[i] + cont.toString();
             cont++;
         }
     }
-
+    console.log(listRes);
     return listRes;
 }
 
