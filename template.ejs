@@ -288,6 +288,16 @@
         }
     }
 
+    <% if(!CPU_Mem) {%>
+
+        containerCPU.innerHTML = "<br/><div class='alert'>" +
+                "<strong>Warning</strong> No monitors found to get CPU" +
+                "</div>"
+        containerMEM.innerHTML = "<br/><div class='alert'>" +
+                "<strong>Warning</strong> No monitors found to get Memory" +
+                "</div>"
+        <% }else{ %>
+
     var persCPU = [];
     var persMem = [];
 
@@ -308,7 +318,7 @@
 
     displayGraph(persCPU, 'CPU Graph', 'Time', 'Percentage', containerCPU, downloadCPU);
     displayGraph(persMem, 'MEM Graph', 'Time', 'MB', containerMEM, downloadMEM);
-
+        <% } %>
 
 </script>
 
