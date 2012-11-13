@@ -1,11 +1,3 @@
-/**
- * Created with JetBrains WebStorm.
- * User: oelmaallem
- * Date: 5/11/12
- * Time: 11:59
- * To change this template use File | Settings | File Templates.
- */
-
 var net = require('net');
 var fs = require('fs');
 var ejs = require('ejs');
@@ -22,9 +14,6 @@ var test = function (callback) {
     var log = function (log) {
         var now = new Date();
         var nowToString = now.toTimeString().slice(0, 8);
-
-        //sender.sendMessage(webSocket, 'endLog', {id: id, time: nowToString, message: log});
-
         logs.push({time: nowToString, message: log});
 
     };
@@ -32,7 +21,6 @@ var test = function (callback) {
     var point = function (x, y) {
         var now = new Date();
         var nowToString = now.toTimeString().slice(0, 8);
-        //var data = {time: nowToString, message: {id: id, point: arrayPoints}, version: 0};
         var p = {x: x, y: y};
         points.push(p);
 
@@ -161,7 +149,6 @@ var createAndLaunchMonitors = function (hosts, clients) {
 
 var describe = function (name, description, axes, hosts, path) {
     return new  Describe(name, description, axes, hosts, path);
-}
+};
 
-
-module.exports = describe;
+exports.describe = describe;
