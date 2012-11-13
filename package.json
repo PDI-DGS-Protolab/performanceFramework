@@ -29,8 +29,8 @@
     },
     "main": "./performance.js",
     "dependencies": {
-        "ejs" : "0.8.3"
-},
+        "ejs": "0.8.3"
+    },
     "license": "AGPL",
     "engine": {
         "node": "0.6.6"
@@ -44,5 +44,5 @@
     "_engineSupported": true,
     "_npmVersion": "1.1.4",
     "_nodeVersion": "v0.6.12",
-    "_defaultsLoaded": true,
+    "_defaultsLoaded": true
 }
