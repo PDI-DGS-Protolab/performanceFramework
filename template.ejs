@@ -154,10 +154,10 @@
         title: '<%= name %>',
         xaxis: {
             minorTickFreq: 4,
-            title: '<%= Yaxis %>'
+            title: '<%= Xaxis %>'
         },
         yaxis: {
-            title: '<%= Xaxis %>'
+            title: '<%= Yaxis %>'
         },
         grid: {
             minorVerticalLines: true
@@ -179,7 +179,7 @@
             downloadMEM = document.getElementById("downloadMEM"),
             graphCPU;
 
-    var displayGraph = function(data, title, xaxisTitle, yaxisTitle, container, downloadButton) {
+    var displayGraph = function(data, title, xaxisTitle, yaxisTitle, yMax, yMin, container, downloadButton) {
         var options, graph, graphData, xMin = Number.MAX_VALUE, xMax = Number.MIN_VALUE;
 
         graphData = new Array();
@@ -201,12 +201,15 @@
             title: title,
             xaxis: {
                 min: xMin,
-                max: 1,
+                max: 10,
                 showLabels: false,
                 minorTickFreq: 4,
                 title: xaxisTitle
             },
             yaxis: {
+                min: yMax,
+                max: yMin,
+                showLabels: true,
                 minorTickFreq: 4,
                 title: yaxisTitle,
                 tickDecimals: 2,
@@ -306,8 +309,8 @@
         persMem.push({ name: hostAndName, data: mem });
     }
 
-    displayGraph(persCPU, 'CPU Graph', 'Time', 'Percentage', containerCPU, downloadCPU);
-    displayGraph(persMem, 'MEM Graph', 'Time', 'MB', containerMEM, downloadMEM);
+    displayGraph(persCPU, 'CPU Graph', 'Time', 'Percentage', 0, 100, containerCPU, downloadCPU);
+    displayGraph(persMem, 'MEM Graph', 'Time', 'MB', null, null, containerMEM, downloadMEM);
 
 
 </script>
