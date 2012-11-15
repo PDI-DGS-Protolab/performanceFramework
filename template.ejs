@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/html">
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Performance framework - <%= name %></title>
     <!-- Bootstrap -->
@@ -94,32 +94,37 @@
                 <div class="hero-unit mem_cpu">
                     <div class="container-fluid">
                     <h2>Log</h2>
-                    <div class="scrollable">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Message</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td><%= start %></td>
-                                <td>Test starts</td>
-                            </tr>
-                            <% for(var i=0; i < logs1.length; i++) {%>
-                            <tr>
-                                <td><%= logs1[i].time %></td>
-                                <td><%= logs1[i].message %></td>
-                            </tr>
-                            <% } %>
-                            <tr>
-                                <td><%= end %></td>
-                                <td>Test ends</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                        <div class="tabbable"> <!-- Only required for left/right tabs -->
+                            <ul class="nav nav-tabs" id="tab-titles">
+                                <% for (var test_name in tests) { %>
+                                <li class="active"><a href="#<%= test_name %>" data-toggle="tab"><%= test_name %></a></li>
+                                <% } %>
+                            </ul>
+                            <div class="tab-content">
+                                <% for (var test_name in tests) { %>
+                                <div class="tab-pane active" id="<%= test_name %>">
+                                    <div class="scrollable">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Timestamp</th>
+                                                <th>Message</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <% for(var i = 0; i < tests[test_name].logs.length; i++){ %>
+                                            <tr>
+                                                <td><%= tests[test_name].logs[i].time %></td>
+                                                <td><%= tests[test_name].logs[i].message %></td>
+                                            </tr>
+                                            <% } %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <% } %>
+                            </div>
+                        </div>
                     <br/>
                     <button type="button" class="btn btn-primary" onclick="downloadLog()">Download</button>
                         </div>
@@ -132,56 +137,51 @@
     </div>
 </div>
 <script type="text/javascript" src="https://raw.github.com/HumbleSoftware/Flotr2/master/flotr2.min.js"></script>
+<script type="text/javascript" src="bootstrap.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script type="text/javascript">
-    var logs = [];
-    logs.push({time : "<%= start %>", message : "Test starts"});
-    logs = logs.concat(<%- logs2 %>);
-    logs.push({time : "<%= end %>", message : "Test ends"});
+        var container = document.getElementById("container");
+        var graphData = new Array();
+        var data = <%-JSON.stringify(tests) %>;
 
-    function downloadLog() {
-        var logTXT = '';
+        /*for (var test in data) {
+            var name = data[test].name;
+            var points = data[test].points;
+            var d1 = new Array();
 
-        for (var i = 0; i < logs.length; i++) {
-            logTXT += logs[i].time + '\t' + logs[i].message + '\n';
+            for (var i = 0; i < points.length; i++) {
+                var point = points[i];
+                d1.push([point.x, point.y]);
+            }
+
+            graphData.push({data: d1, label:name, lines: { show: true }, points: { show: true }});
+
         }
 
-        window.open('data:download/plain;charset=utf-8,' + encodeURI(logTXT), '_blank');
-    }
-</script>
-<script type="text/javascript">
-    var container = document.getElementById("container");
-    var d1 = [];
-    var data = <%-points %>;
-    for (var i = 0; i < data.length; i++) {
-        var point = data[i];
-        d1.push([point.x, point.y]);
-    }
-
-    var graph = Flotr.draw(container, [
-        { data: d1, lines: { show: true }, points: { show: true } }
-    ], {
-        HtmlText: false,
-        title: '<%= name %>',
-        xaxis: {
-            minorTickFreq: 4,
-            title: '<%= Xaxis %>'
-        },
-        yaxis: {
-            title: '<%= Yaxis %>'
-        },
-        grid: {
-            minorVerticalLines: true
-        },
-        mouse: {
-            track: true,
-            relative: true
-        }
-    });
-    var downloadGraph = document.getElementById("downloadGraph");
-    downloadGraph.onclick = function(){
-        graph.download.saveImage('png');
-    };
-</script>
+        var graph = Flotr.draw(container, graphData,
+                {
+                    HtmlText: false,
+                    title: '<%= name %>',
+                    xaxis: {
+                        minorTickFreq: 4,
+                        title: '<%= Xaxis %>'
+                    },
+                    yaxis: {
+                        title: '<%= Yaxis %>'
+                    },
+                    grid: {
+                        minorVerticalLines: true
+                    },
+                    mouse: {
+                        track: true,
+                        relative: true
+                    }
+                });
+        var downloadGraph = document.getElementById("downloadGraph");
+        downloadGraph.onclick = function(){
+            graph.download.saveImage('png');
+        };*/
+    </script>
 <script type="text/javascript">
     var containerCPU = document.getElementById("containerCPU"),
             containerMEM = document.getElementById("containerMEM"),

@@ -1,29 +1,24 @@
 var net = require('net');
 var fs = require('fs');
 var ejs = require('ejs');
+var path = require('path');
 
-var number_scenarios = 0;
-var webSocket;
+var DIR_MODULE = path.dirname(module.filename);
 
-var test = function (callback) {
-    var id = this.test_id;
-    var points = this.points;
-    var logs = this.logs;
-
+var test = function (name, callback) {
+    var tests = this.tests;
+    tests[name] = {name : name, logs: [], points : []};
 
     var log = function (log) {
         var now = new Date();
         var nowToString = now.toTimeString().slice(0, 8);
-        logs.push({time: nowToString, message: log});
+        tests[name].logs.push({time: nowToString, message: log});
 
     };
 
     var point = function (x, y) {
-        var now = new Date();
-        var nowToString = now.toTimeString().slice(0, 8);
         var p = {x: x, y: y};
-        points.push(p);
-
+        tests[name].points.push(p);
     };
     callback(log, point);
 };
@@ -31,24 +26,22 @@ var test = function (callback) {
 var done = function () {
     var axes = this.axes;
     var name = this.name;
-    var points = this.points;
-    var logs = this.logs;
+    var tests = this.tests;
     var description = this.description;
     var path = this.path;
     var CPU_Mem = this.CPU_Mem;
     var memory = this.memory;
     var start = this.start;
     var end = new Date();
-    fs.readFile('template.ejs', function (err, data) {
+    fs.readFile(DIR_MODULE + '/template.ejs', function (err, data) {
         if (!err) {
+            console.log(tests.test2.name);
             var html = ejs.render(data.toString(), {
                 name: name,
                 description: description,
-                logs1: logs,
-                logs2: JSON.stringify(logs),
                 Xaxis: axes[0],
                 Yaxis: axes[1],
-                points: JSON.stringify(points),
+                tests: tests,
                 CPU_Mem: JSON.stringify(CPU_Mem),
                 start : start.toTimeString().slice(0, 8),
                 end : end.toTimeString().slice(0, 8)
@@ -78,18 +71,22 @@ var done = function () {
 };
 var Describe = function (name, description, axes, hosts, path) {
     'use strict'
-    this.test_id = number_scenarios++;
     this.name = name;
     this.description = description;
     this.axes = axes;
     this.path = path;
     this.test = test;
     this.done = done;
-    this.logs = [];
-    this.points = [];
+    this.tests = {};
     this.createAndLaunchMonitors = createAndLaunchMonitors;
     this.start = new Date();
     this.clients = [];
+
+    this.num_tests = 0;
+
+    this.test_done = function(){
+
+    }
 
    if (hosts.length!==0)  {
     this.CPU_Mem = {};
@@ -150,5 +147,24 @@ var createAndLaunchMonitors = function (hosts, clients) {
 var describe = function (name, description, axes, hosts, path) {
     return new  Describe(name, description, axes, hosts, path);
 };
+
+var test = describe('TEST', 'This is an example...', ['X', 'Y'], [], '.');
+
+test.test("test2", function(log,point){
+    log('hola');
+    point(20,10);
+    point(33,12);
+});
+
+test.test("test3", function(log,point){
+    log("rgdfg");
+    point(2,4);
+    point(34,1);
+});
+
+
+setTimeout(function() {
+    test.done();
+}, 0);
 
 exports.describe = describe;
