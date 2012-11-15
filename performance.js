@@ -1,9 +1,9 @@
 var net = require('net');
 var fs = require('fs');
 var ejs = require('ejs');
+var path = require('path');
 
-var number_scenarios = 0;
-var webSocket;
+var DIR_MODULE = path.dirname(module.filename);
 
 var test = function (callback) {
     var id = this.test_id;
@@ -39,7 +39,9 @@ var done = function () {
     var memory = this.memory;
     var start = this.start;
     var end = new Date();
-    fs.readFile('template.ejs', function (err, data) {
+
+    fs.readFile(DIR_MODULE + '/template.ejs', function (err, data) {
+
         if (!err) {
             var html = ejs.render(data.toString(), {
                 name: name,
@@ -53,7 +55,7 @@ var done = function () {
                 start : start.toTimeString().slice(0, 8),
                 end : end.toTimeString().slice(0, 8)
 
-        });
+            });
 
 
             var now = new Date();
@@ -78,7 +80,6 @@ var done = function () {
 };
 var Describe = function (name, description, axes, hosts, path) {
     'use strict'
-    this.test_id = number_scenarios++;
     this.name = name;
     this.description = description;
     this.axes = axes;
@@ -91,10 +92,10 @@ var Describe = function (name, description, axes, hosts, path) {
     this.start = new Date();
     this.clients = [];
 
-   if (hosts.length!==0)  {
-    this.CPU_Mem = {};
-    this.createAndLaunchMonitors(hosts, this.clients);
-   }
+    if (hosts.length!==0)  {
+        this.CPU_Mem = {};
+        this.createAndLaunchMonitors(hosts, this.clients);
+    }
     try {
         var stats = fs.lstatSync(path);
         if (!stats.isDirectory()) {
@@ -103,13 +104,13 @@ var Describe = function (name, description, axes, hosts, path) {
         }
     } catch (e) {
         var directories=path.split('/');
-         var aux='';
-         for (var i=0;i<directories.length;i++){
-              if (directories[i]!==''){
-                  aux+=directories[i]+'/';
-                 fs.mkdir(aux);
-              }
-         }
+        var aux='';
+        for (var i=0;i<directories.length;i++){
+            if (directories[i]!==''){
+                aux+=directories[i]+'/';
+                fs.mkdir(aux);
+            }
+        }
         console.log('The directory ' + aux + ' has been created');
     }
 };

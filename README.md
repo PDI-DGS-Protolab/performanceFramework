@@ -26,3 +26,37 @@ If you have more than one program to test, the CPU and memory of each one will b
 ###Without Monitor:
 
 That option can only generate the customize graph and log.
+
+### Example code
+
+With two monitors:
+
+```
+var pf = require('performanceFramework');
+var scenario1 = pf.describe('TEST', 'This is an example...', ['Xaxis', 'Yaxis'], ['localhost', '192.168.1.65'], '.'); //monitor on localhost
+scenario1.test(function(log,point){
+    log("new message");
+    point(20,10);
+    point(100,1);
+    log("new message");
+});
+setTimeout(function() {
+    scenario1.done();
+}, 10000); 
+```
+
+Without monitors:
+
+```
+var pf = require('performanceFramework');
+var scenario1 = pf.describe('TEST', 'This is an example...', ['Xaxis', 'Yaxis'], [], '.'); //no monitors
+scenario1.test(function(log,point){
+    log("new message");
+    point(20,10);
+    point(100,1);
+    log("new message");
+});
+setTimeout(function() {
+    scenario1.done();
+}, 10000); 
+```
