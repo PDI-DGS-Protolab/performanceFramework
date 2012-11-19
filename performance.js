@@ -8,12 +8,16 @@ var DIR_MODULE = path.dirname(module.filename);
 var test = function (name, callback) {
     var tests = this.tests;
     tests[name] = {name : name, logs: [], points : []};
+    var start  = new Date().toTimeString().slice(0, 8);
+    tests[name].logs.push({time: start, message: "Tests starts"});
+    tests[name].logs.push({time: start, message: "Tests ends"});
 
     var log = function (log) {
         var now = new Date();
         var nowToString = now.toTimeString().slice(0, 8);
-        tests[name].logs.push({time: nowToString, message: log});
-
+        tests[name].logs[(tests[name].logs.length-1)] = {time: nowToString, message: log};
+        var end  = new Date().toTimeString().slice(0, 8);
+        tests[name].logs.push({time: end, message: "Tests ends"});
     };
 
     var point = function (x, y) {
@@ -33,7 +37,7 @@ var done = function () {
     var memory = this.memory;
     var start = this.start;
     var end = new Date();
-    fs.readFile(DIR_MODULE + '/template.ejs', function (err, data) {
+    fs.readFile(DIR_MODULE + '/wijmo.ejs', function (err, data) {
         if (!err) {
             console.log(tests.test2.name);
             var html = ejs.render(data.toString(), {
@@ -43,8 +47,6 @@ var done = function () {
                 Yaxis: axes[1],
                 tests: tests,
                 CPU_Mem: JSON.stringify(CPU_Mem),
-                start : start.toTimeString().slice(0, 8),
-                end : end.toTimeString().slice(0, 8)
 
         });
 
@@ -79,7 +81,6 @@ var Describe = function (name, description, axes, hosts, path) {
     this.done = done;
     this.tests = {};
     this.createAndLaunchMonitors = createAndLaunchMonitors;
-    this.start = new Date();
     this.clients = [];
 
     this.num_tests = 0;
