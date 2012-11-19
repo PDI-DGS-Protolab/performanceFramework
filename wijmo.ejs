@@ -77,7 +77,7 @@
             <div>
                 <div class="row-fluid" style="height: 700px;">
                     <div class="span7" style="overflow: hidden;height: 100%;">
-                        <h4 class="header-bar">Description</h4>
+                        <h4 class="header-bar">Graph</h4>
                         <div class="hero-unit" style="height: 80%;">
                             <div id="container" style="height: 500px"></div>
                         </div>
@@ -206,7 +206,7 @@
             showChartLabels: false,
             hint: {
                 content: function () {
-                    return this.y;
+                    return '(' + this.x + ', '  + this.y ')';
                 }
             },
             header: {
@@ -265,7 +265,7 @@
                     y: {
                         autoMax: (yMax == null) ? true : false,
                         max: 100,
-                        title: yaxisTitle,
+                        text: yaxisTitle,
                     },
                     x: {
                         textVisible: false
