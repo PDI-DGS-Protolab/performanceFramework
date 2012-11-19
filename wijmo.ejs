@@ -193,13 +193,13 @@
         $("#container").wijlinechart({
             axis: {
                 x: {
-                    text: 'Transactions'
+                    text: <%= Xaxis %>
                 },
                 y: {
                     min: 0,
                     autoMin: 0,
                     autoMinor: 0,
-                    text: 'TPS'
+                    text: <%= Yaxis %>
                 }
             },
 
@@ -210,7 +210,7 @@
                 }
             },
             header: {
-                text: "Max Pop"
+                text: <%= name %>
             },
             seriesList: graphData,
             seriesStyles: style,
