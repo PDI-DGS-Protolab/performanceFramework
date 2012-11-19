@@ -95,7 +95,7 @@
                     <div id="tabs">
                         <ul>
                             <% for (var test_name in tests) { %>
-                            <li class="active"><a href="#<%= test_name %>" data-toggle="tab"><%= test_name %></a></li>
+                            <li class="active"><a href="#<%= test_name %>" data-toggle="tab"><%= tests[test_name].name %></a></li>
                             <% } %>
                         </ul>
                         <%for (var test_name in tests) { %>
@@ -161,11 +161,6 @@
 </script>
 
 <script type="text/javascript">
-
-    function downloadLog() {
-        window.alert('Not implemented!');
-    }
-
 
     var container = document.getElementById("container");
     var graphData = new Array();

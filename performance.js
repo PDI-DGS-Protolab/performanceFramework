@@ -6,23 +6,25 @@ var path = require('path');
 var DIR_MODULE = path.dirname(module.filename);
 
 var test = function (name, callback) {
+    'use strict';
+    var name_underscore = name.replace(/\s/g, "_");
     var tests = this.tests;
-    tests[name] = {name : name, logs: [], points : []};
-    var start  = new Date().toTimeString().slice(0, 8);
-    tests[name].logs.push({time: start, message: "Tests starts"});
-    tests[name].logs.push({time: start, message: "Tests ends"});
+    tests[name_underscore] = {name: name, logs: [], points: []};
+    var start = new Date().toTimeString().slice(0, 8);
+    tests[name_underscore].logs.push({time: start, message: "Tests starts"});
+    tests[name_underscore].logs.push({time: start, message: "Tests ends"});
 
     var log = function (log) {
         var now = new Date();
         var nowToString = now.toTimeString().slice(0, 8);
-        tests[name].logs[(tests[name].logs.length-1)] = {time: nowToString, message: log};
-        var end  = new Date().toTimeString().slice(0, 8);
-        tests[name].logs.push({time: end, message: "Tests ends"});
+        tests[name_underscore].logs[(tests[name_underscore].logs.length - 1)] = {time: nowToString, message: log};
+        var end = new Date().toTimeString().slice(0, 8);
+        tests[name_underscore].logs.push({time: end, message: "Tests ends"});
     };
 
     var point = function (x, y) {
         var p = {x: x, y: y};
-        tests[name].points.push(p);
+        tests[name_underscore].points.push(p);
     };
     callback(log, point);
 };
@@ -39,16 +41,14 @@ var done = function () {
     var end = new Date();
     fs.readFile(DIR_MODULE + '/wijmo.ejs', function (err, data) {
         if (!err) {
-            console.log(tests.test2.name);
             var html = ejs.render(data.toString(), {
                 name: name,
                 description: description,
                 Xaxis: axes[0],
                 Yaxis: axes[1],
                 tests: tests,
-                CPU_Mem: JSON.stringify(CPU_Mem),
-
-        });
+                CPU_Mem: JSON.stringify(CPU_Mem)
+            });
 
 
             var now = new Date();
@@ -66,7 +66,7 @@ var done = function () {
 
         }
     });
-    for (var i=0; i<this.clients.length; i++){
+    for (var i = 0; i < this.clients.length; i++) {
         this.clients[i].removeAllListeners();
         this.clients[i].end();
     }
@@ -85,14 +85,10 @@ var Describe = function (name, description, axes, hosts, path) {
 
     this.num_tests = 0;
 
-    this.test_done = function(){
-
+    if (hosts.length !== 0) {
+        this.CPU_Mem = {};
+        this.createAndLaunchMonitors(hosts, this.clients);
     }
-
-   if (hosts.length!==0)  {
-    this.CPU_Mem = {};
-    this.createAndLaunchMonitors(hosts, this.clients);
-   }
     try {
         var stats = fs.lstatSync(path);
         if (!stats.isDirectory()) {
@@ -100,14 +96,14 @@ var Describe = function (name, description, axes, hosts, path) {
             process.exit();
         }
     } catch (e) {
-        var directories=path.split('/');
-         var aux='';
-         for (var i=0;i<directories.length;i++){
-              if (directories[i]!==''){
-                  aux+=directories[i]+'/';
-                 fs.mkdir(aux);
-              }
-         }
+        var directories = path.split('/');
+        var aux = '';
+        for (var i = 0; i < directories.length; i++) {
+            if (directories[i] !== '') {
+                aux += directories[i] + '/';
+                fs.mkdir(aux);
+            }
+        }
         console.log('The directory ' + aux + ' has been created');
     }
 };
@@ -146,26 +142,7 @@ var createAndLaunchMonitors = function (hosts, clients) {
 };
 
 var describe = function (name, description, axes, hosts, path) {
-    return new  Describe(name, description, axes, hosts, path);
+    return new Describe(name, description, axes, hosts, path);
 };
-
-var test = describe('TEST', 'This is an example...', ['X', 'Y'], [], '.');
-
-test.test("test2", function(log,point){
-    log('hola');
-    point(20,10);
-    point(33,12);
-});
-
-test.test("test3", function(log,point){
-    log("rgdfg");
-    point(2,4);
-    point(34,1);
-});
-
-
-setTimeout(function() {
-    test.done();
-}, 0);
 
 exports.describe = describe;
