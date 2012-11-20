@@ -78,7 +78,7 @@ function splitAndName(path) {
     var elems = [];
     var res;
     elems = path.split('/');
-    res = elems[path.length() - 1];
+    res = elems[elems.length - 1];
     return res;
 }
 
