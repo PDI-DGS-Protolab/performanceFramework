@@ -39,37 +39,41 @@ var done = function () {
     var memory = this.memory;
     var start = this.start;
     var end = new Date();
-    fs.readFile(DIR_MODULE + '/wijmo.ejs', function (err, data) {
-        if (!err) {
-            var html = ejs.render(data.toString(), {
-                name: name,
-                description: description,
-                Xaxis: axes[0],
-                Yaxis: axes[1],
-                tests: tests,
-                CPU_Mem: JSON.stringify(CPU_Mem)
-            });
+
+    function writeAndClose() {
+        fs.readFile(DIR_MODULE + '/wijmo.ejs', function (err, data) {
+            if (!err) {
+                var html = ejs.render(data.toString(), {
+                    name: name,
+                    description: description,
+                    Xaxis: axes[0],
+                    Yaxis: axes[1],
+                    tests: tests,
+                    CPU_Mem: JSON.stringify(CPU_Mem)
+                });
+
+                var now = new Date();
+                var nowToString = now.toTimeString().slice(0, 8);
+                var file = name + '-' + nowToString + '.html';
+                file = path + '/' + file;
+                fs.writeFile(file, html, function (err) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log('The file ' + file + ' was saved');
+                    }
+                });
 
 
-            var now = new Date();
-            var nowToString = now.toTimeString().slice(0, 8);
-            var file = name + '-' + nowToString + '.html';
-            file = path + '/' + file;
-            fs.writeFile(file, html, function (err) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log('The file ' + file + ' was saved');
-                }
-            });
-
-
+            }
+        });
+        for (var i = 0; i < this.clients.length; i++) {
+            this.clients[i].removeAllListeners();
+            this.clients[i].end();
         }
-    });
-    for (var i = 0; i < this.clients.length; i++) {
-        this.clients[i].removeAllListeners();
-        this.clients[i].end();
     }
+
+    setTimeout(writeAndClose, 10000);
 };
 var Describe = function (name, description, axes, hosts, path) {
     'use strict'
