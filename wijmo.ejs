@@ -193,24 +193,24 @@
         $("#container").wijlinechart({
             axis: {
                 x: {
-                    text: <%= Xaxis %>
+                    text: '<%= Xaxis %>'
                 },
                 y: {
                     min: 0,
                     autoMin: 0,
                     autoMinor: 0,
-                    text: <%= Yaxis %>
+                    text: '<%= Yaxis %>'
                 }
             },
 
             showChartLabels: false,
             hint: {
                 content: function () {
-                    return '(' + this.x + ', '  + this.y ')';
+                    return '(' + this.x + ', '  + this.y + ')';
                 }
             },
             header: {
-                text: <%= name %>
+                text: '<%= name %>'
             },
             seriesList: graphData,
             seriesStyles: style,
