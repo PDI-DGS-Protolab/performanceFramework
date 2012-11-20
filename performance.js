@@ -44,48 +44,47 @@ var done = function () {
     var tests = this.tests;
     var description = this.description;
     var path = this.path;
-    var CPU_Mem = this.CPU_Mem;
-    var memory = this.memory;
-    var start = this.start;
-    var end = new Date();
+    var clients = this.clients;
 
-    function writeAndClose() {
-    fs.readFile(DIR_MODULE + '/wijmo.ejs', function (err, data) {
+    function writeAndClose(CPU_Mem) {
+        fs.readFile(DIR_MODULE + '/wijmo.ejs', function (err, data) {
 
-        if (!err) {
+            if (!err) {
 
-            var html = ejs.render(data.toString(), {
-                name: name,
-                description: description,
-                Xaxis: axes[0],
-                Yaxis: axes[1],
-                tests: tests,
-                CPU_Mem: JSON.stringify(CPU_Mem)
-            });
+                var html = ejs.render(data.toString(), {
+                    name: name,
+                    description: description,
+                    Xaxis: axes[0],
+                    Yaxis: axes[1],
+                    tests: tests,
+                    CPU_Mem: JSON.stringify(CPU_Mem)
+                });
 
-            var now = new Date();
-            var nowToString = now.toTimeString().slice(0, 8);
-            var file = path + '/' + name + '-' + nowToString + '.html';
+                var now = new Date();
+                var nowToString = now.toTimeString().slice(0, 8);
+                var file = path + '/' + name + '-' + nowToString + '.html';
 
-            fs.writeFile(file, html, function (err) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log('The file ' + file + ' has been created successfully.');
-                }
-            });
+                fs.writeFile(file, html, function (err) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log('The file ' + file + ' has been created successfully.');
+                    }
+                });
 
 
             }
         });
-        for (var i = 0; i < this.clients.length; i++) {
-            this.clients[i].removeAllListeners();
-            this.clients[i].end();
-        }
-    });
 
-    setTimeout(writeAndClose, 10000);
+        for (var i = 0; i < clients.length; i++) {
+            clients[i].removeAllListeners();
+            clients[i].end();
+        }
+    };
+
+    setTimeout(writeAndClose.bind({}, this.CPU_Mem), 10000);
 };
+
 var Describe = function (name, description, axes, hosts, path) {
     'use strict'
 
