@@ -39,15 +39,16 @@ var test = function (name, callback) {
 var done = function () {
     'use strict'
 
-    var axes = this.axes;
     var name = this.name;
-    var tests = this.tests;
     var description = this.description;
+    var template = this.template;
+    var axes = this.axes;
+    var tests = this.tests;
     var path = this.path;
     var clients = this.clients;
 
     function writeAndClose(CPU_Mem) {
-        fs.readFile(DIR_MODULE + '/wijmo.ejs', function (err, data) {
+        fs.readFile(DIR_MODULE + '/' + template + '.ejs', function (err, data) {
 
             if (!err) {
 
@@ -85,11 +86,12 @@ var done = function () {
     setTimeout(writeAndClose.bind({}, this.CPU_Mem), 10000);
 };
 
-var Describe = function (name, description, axes, hosts, path) {
+var Describe = function (name, description, template, axes, hosts, path) {
     'use strict'
 
     this.name = name;
     this.description = description;
+    this.template = template;
     this.axes = axes;
     this.path = path;
     this.test = test;
@@ -165,8 +167,8 @@ var createAndLaunchMonitors = function (hosts, clients) {
     }
 };
 
-var describe = function (name, description, axes, hosts, path) {
-    return new Describe(name, description, axes, hosts, path);
+var describe = function (name, description, template, axes, hosts, path) {
+    return new Describe(name, description, template, axes, hosts, path);
 };
 
 exports.describe = describe;
