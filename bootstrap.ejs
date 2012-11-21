@@ -98,11 +98,11 @@
                             <ul class="nav nav-tabs" id="tab-titles">
                                 <%var i=0; for (var test_name in tests) { %>
                                 <li <%if (i===0){ %> class="active" <% } %>><a href="#<%= test_name %>" data-toggle="tab"><%= test_name %></a></li>
-                                <% } i++; %>
+                                <% i++} %>
                             </ul>
                             <div class="tab-content">
-                                <% for (var test_name in tests) { %>
-                                <div class="tab-pane active" id="<%= test_name %>">
+                                <% var i==0; for (var test_name in tests) { %>
+                                <div class="tab-pane <%if (i===0){ %> active <% }" id="<%= test_name %>">
                                     <div class="scrollable">
                                         <table class="table table-striped">
                                             <thead>
@@ -122,7 +122,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <% } %>
+                                <% i++; } %>
                             </div>
                         </div>
                     <br/>
