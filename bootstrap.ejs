@@ -144,11 +144,11 @@
 <script type="text/javascript">
         var container = document.getElementById("container");
         var graphData = new Array();
-        var data = <%-JSON.stringify(tests) %>;
+        var tests = <%-JSON.stringify(tests) %>;
 
         function downloadLog(name) {
 
-            var logs = data[name].logs;
+            var logs = tests[name].logs;
             var logTXT = '';
 
             for (var i = 0; i < logs.length; i++) {
@@ -158,9 +158,9 @@
             window.open('data:download/plain;charset=utf-8,' + encodeURI(logTXT), '_blank');
         }
 
-        for (var test in data) {
-            var name = data[test].name;
-            var points = data[test].points;
+        for (var test in tests) {
+            var name = tests[test].name;
+            var points = tests[test].points;
             var d1 = new Array();
 
             for (var i = 0; i < points.length; i++) {
