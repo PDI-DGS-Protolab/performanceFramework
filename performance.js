@@ -74,6 +74,8 @@ var done = function () {
                 });
 
 
+            } else {
+                console.log('ERROR: The chosen template does not exist.')
             }
         });
 
