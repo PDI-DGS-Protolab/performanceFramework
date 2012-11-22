@@ -10,19 +10,21 @@ for (var i = 2; i < process.argv.length; i++) {
 }
 
 var pid;
-var pids = [];
+//var pids = [];
 var programs = createProcessList(paths);
 
 for (var i = 0; i < programs.length; i++) {
-    var aux = new Array()
+    var aux = [];
     pid = runProgram(programs[i].process, programs[i].arguments);
     console.log('A new process has been launched with PID: ' + pid);
 
-    setTimeout(function () {
+    setTimeout(function (i, pid) {
         aux = utils.getchildProcesses(pid);
         aux.push(pid);
-        pids.push(aux);
-    }, 1000);
+        //pids.push(aux);
+        programs[i].pids = aux;
+        console.log('pids ' + programs[i].pids)
+    }.bind({}, i, pid), 1000);
 }
 
 var server = net.createServer(function (connection) {
@@ -34,10 +36,10 @@ var server = net.createServer(function (connection) {
         console.log('Client open the connection...');
         //Monitoring an agent sending the client information about the usage of CPU and RAM
         monitorInterval = setInterval(function () {
-            for (var i = 0; i < pids.length; i++) {
+            for (var i = 0; i < programs.length; i++) {
                 function iterate(i) {
-                    var res = utils.monitor(pids[i], function (res) {
-                        console.log('CPU: ' + res.cpu + ' - Memory: ' + res.memory);
+                    var res = utils.monitor(programs[i].pids, function (res) {
+                        console.log('PID: ' + programs[i].pids + ' - CPU: ' + res.cpu + ' - Memory: ' + res.memory);
                         connection.write(JSON.stringify({host: os.hostname(), name: programs[i].name, cpu: {percentage: res.cpu}, memory: {value: res.memory}}) + '\n');
                     });
                 }
@@ -87,10 +89,10 @@ function createProcessList(paths){
     for(var i = 0; i < paths.length; i++){
         elems = paths[i].split(' ');
         if(elems.length > 1){
-            programsWithArgs.push({process: elems[0], name: elems[0], arguments: elems.slice(1)});
+            programsWithArgs.push({process: elems[0], pids: [], name: elems[0], arguments: elems.slice(1)});
         }
         if(elems.length === 1){
-            programs.push({process: elems[0], name: splitAndName(elems[0])});
+            programs.push({process: elems[0], pids: [],name: splitAndName(elems[0])});
         }
     }
     programs = programs.concat(programsWithArgs);
