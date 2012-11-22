@@ -148,17 +148,19 @@ var createAndLaunchMonitors = function (hosts, clients) {
             client.on('data', function (data) {
 
                 var splitted = data.toString().split('\n');
-                var validData = splitted[splitted.length - 2];
-                var JSONdata = JSON.parse(validData);
-                var id = JSONdata.host + JSONdata.name;
 
-                //console.log(JSONdata);
+                //The last is not a JSON. Is an empty string so it should not be parsed.
+                for (var i = 0; i < splitted.length - 1; i++) {
+                    var validData = splitted[i];
+                    var JSONdata = JSON.parse(validData);
+                    var id = JSONdata.host + '_' + JSONdata.name;
 
-                if (!(CPU_Mem.hasOwnProperty(id))) {
-                    CPU_Mem[id] = [];
+                    if (!(CPU_Mem.hasOwnProperty(id))) {
+                        CPU_Mem[id] = [];
+                    }
+
+                    CPU_Mem[id].push({host: JSONdata.host, name: JSONdata.name, cpu: JSONdata.cpu.percentage, memory: parseInt(JSONdata.memory.value)});
                 }
-
-                CPU_Mem[id].push({host: JSONdata.host, name: JSONdata.name, cpu: JSONdata.cpu.percentage, memory: parseInt(JSONdata.memory.value)});
             });
 
         }.bind({}, client));
