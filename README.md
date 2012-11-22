@@ -18,6 +18,9 @@ There are two options to use the framework:
 
 ###With Monitor:
 
+When you install this framework in your repository you can monitor the CPU and memory of your processes. For this purpose
+the framework has an app called "monitor.js" that is located in node_modules/performanceFramework.
+
 If you want CPU and memory monitoring you must run "monitor.js" in the host where you run the process to test. In order to
 monitor the processs, "monitor.js" must receive the paths of the programs that you want to monitor in this way: "program-to-run 
 arguments" (e.g: if you want to run node app named app.js you need to run monitor.js "node path/app.js").
