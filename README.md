@@ -18,10 +18,10 @@ There are two options to use the framework:
 
 ###With Monitor:
 
-monitor.js (performanceFramework/monitor.js) must be run in the host where you execute the program to test.
-monitor.js must receive as arguments the path of the programs to test and it will execute them. 
-Using this option, CPU and memory graphs will be generated automatically (monitor.js will generate this data). 
-If you have more than one program to test, the CPU and memory of each one will be represented with different colours.
+If you want CPU and memory monitoring you must run "monitor.js" in the host where you run the process to test. In order to
+monitor the processs, "monitor.js" must receive the paths of the programs that you want to monitor in this way: "program-to-run 
+arguments" (e.g: if you want to run node app named app.js you need to run monitor.js "node path/app.js").
+The CPU and memory of each process will be represented in two graphs with one colour for each process being monitored.
 
 ###Without Monitor:
 
