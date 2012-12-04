@@ -153,13 +153,13 @@ var createAndLaunchMonitors = function (hosts, clients) {
                 for (var i = 0; i < splitted.length - 1; i++) {
                     var validData = splitted[i];
                     var JSONdata = JSON.parse(validData);
-                    var id = JSONdata.host + '_' + JSONdata.name;
+                    var id = JSONdata.host + '_' + JSONdata.name + '_' + JSONdata.pid;
 
                     if (!(CPU_Mem.hasOwnProperty(id))) {
                         CPU_Mem[id] = [];
                     }
 
-                    CPU_Mem[id].push({host: JSONdata.host, name: JSONdata.name, cpu: JSONdata.cpu.percentage, memory: parseInt(JSONdata.memory.value)});
+                    CPU_Mem[id].push({host: JSONdata.host, name: JSONdata.name, pid: JSONdata.pid, cpu: JSONdata.cpu.percentage, memory: parseInt(JSONdata.memory.value)});
                 }
             });
 

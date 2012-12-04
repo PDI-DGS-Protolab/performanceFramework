@@ -40,7 +40,7 @@ var server = net.createServer(function (connection) {
                 function iterate(i) {
                     var res = utils.monitor(programs[i].pids, function (res) {
                         console.log('PID: ' + programs[i].pids + ' - CPU: ' + res.cpu + ' - Memory: ' + res.memory);
-                        connection.write(JSON.stringify({host: os.hostname(), name: programs[i].name, cpu: {percentage: res.cpu}, memory: {value: res.memory}}) + '\n');
+                        connection.write(JSON.stringify({host: os.hostname(), name: programs[i].name, pid: programs[i].pids, cpu: {percentage: res.cpu}, memory: {value: res.memory}}) + '\n');
                     });
                 }
                 iterate(i);
