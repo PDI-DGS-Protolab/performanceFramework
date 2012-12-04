@@ -25,8 +25,13 @@ If you want CPU and memory monitoring you must run "monitor.js" in the host wher
 monitor the processs, "monitor.js" must receive the paths of the programs that you want to monitor in this way: "program-to-run 
 arguments". For example, if you want to run a node app named app.js you need to run:
 ```
-node monitor.js "node path/app.js"
+node monitor.js "node path/to/app.js"
 ```
+You can also monitor regular programs. For example, if you want to monitor redis-server, you must run:
+```
+node monitor.js "/path/to/redis-server"
+```
+
 The CPU and memory of each process will be represented in two graphs with one colour for each process being monitored.
 
 ###Without Monitor:
