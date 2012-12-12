@@ -216,19 +216,8 @@
             seriesStyles: style,
             seriesHoverStyles: styleHover
         });
-        var resizeTimer = null;
-        $(window).resize(function () {
-            window.clearTimeout(resizeTimer);
-            resizeTimer = window.setTimeout(function () {
-                var jqLine = $("#wijlinechart"),
-                        width = jqLine.width(),
-                        height = jqLine.height();
-                if (!width || !height) {
-                    window.clearTimeout(resizeTimer);
-                    return;
-                }
-                jqLine.wijlinechart("redraw", width, height);
-            }, 250);
+        $(window).resize(function(){
+            $("#container").wijlinechart("redraw");
         });
     })
 </script>
@@ -283,20 +272,9 @@
                 seriesList: graphData,
 
             });
-            var resizeTimer = null;
-            $(window).resize(function () {
-                window.clearTimeout(resizeTimer);
-                resizeTimer = window.setTimeout(function () {
-                    var jqLine = $("#wijlinechart"),
-                            width = jqLine.width(),
-                            height = jqLine.height();
-                    if (!width || !height) {
-                        window.clearTimeout(resizeTimer);
-                        return;
-                    }
-                    jqLine.wijlinechart("redraw", width, height);
-                }, 250);
-            });
+        $(window).resize(function(){
+            $(container).wijlinechart("redraw");
+        });
         })
     }
 
