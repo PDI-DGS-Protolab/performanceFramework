@@ -172,7 +172,9 @@
 
         }
 
-        var graph = Flotr.draw(container, graphData,
+        function drawGraph() {
+
+            return Flotr.draw(container, graphData,
                 {
                     HtmlText: false,
                     title: '<%= name %>',
@@ -191,6 +193,10 @@
                         relative: true
                     }
                 });
+        }
+
+        var graph = drawGraph();
+
         var downloadGraph = document.getElementById("downloadGraph");
         downloadGraph.onclick = function(){
             graph.download.saveImage('png');
@@ -323,28 +329,38 @@
         containerMEM.innerHTML = "<br/><div class='alert'>" +
                 "<strong>Warning</strong> No monitors found to get Memory" +
                 "</div>"
-        <% }else{ %>
 
-    var persCPU = [];
-    var persMem = [];
+        window.onresize = function() {
+            graph = drawGraph();
+        };
+    <% }else{ %>
 
-    var data = <%-CPU_Mem %>;
-    console.log(data);
-    for (var hostAndName in data) {
-        var cpu = [];
-        var mem = [];
-        var eachArray = data[hostAndName];
-        for (var i=0; i < eachArray.length; i++){
-            cpu.push([i,eachArray[i].cpu]);
-            mem.push([i,eachArray[i].memory / 1024])
+        var persCPU = [];
+        var persMem = [];
+
+        var data = <%-CPU_Mem %>;
+        console.log(data);
+        for (var hostAndName in data) {
+            var cpu = [];
+            var mem = [];
+            var eachArray = data[hostAndName];
+            for (var i=0; i < eachArray.length; i++){
+                cpu.push([i,eachArray[i].cpu]);
+                mem.push([i,eachArray[i].memory / 1024])
+            }
+            console.log(cpu);
+            persCPU.push({ name: hostAndName, data: cpu });
+            persMem.push({ name: hostAndName, data: mem });
         }
-        console.log(cpu);
-        persCPU.push({ name: hostAndName, data: cpu });
-        persMem.push({ name: hostAndName, data: mem });
-    }
-    displayGraph(persCPU, 'CPU Graph', 'Time', 'Percentage', 0, 100, containerCPU, downloadCPU);
-    displayGraph(persMem, 'MEM Graph', 'Time', 'MB', null, null, containerMEM, downloadMEM);
-        <% } %>
+        displayGraph(persCPU, 'CPU Graph', 'Time', 'Percentage', 0, 100, containerCPU, downloadCPU);
+        displayGraph(persMem, 'MEM Graph', 'Time', 'MB', null, null, containerMEM, downloadMEM);
+
+        window.onresize = function() {
+            graph = drawGraph();
+            displayGraph(persCPU, 'CPU Graph', 'Time', 'Percentage', 0, 100, containerCPU, downloadCPU);
+            displayGraph(persMem, 'MEM Graph', 'Time', 'MB', null, null, containerMEM, downloadMEM);
+        };
+    <% } %>
 
 </script>
 
