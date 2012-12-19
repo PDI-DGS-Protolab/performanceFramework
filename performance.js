@@ -138,11 +138,9 @@ var createAndLaunchMonitors = function (hosts, clients) {
     var i = 0;
     var CPU_Mem = this.CPU_Mem;
     var start = this.start;
-    console.log(hosts.length);
     for (i = 0; i < hosts.length; i++) {
         var host = hosts[i];
         var client = new net.Socket();
-        console.log("entra");
         clients.push(client);
         client.connect(8091, host, function () {
             client.on('data', function (data) {
