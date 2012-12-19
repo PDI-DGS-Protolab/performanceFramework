@@ -138,13 +138,11 @@ var createAndLaunchMonitors = function (hosts, clients) {
     var i = 0;
     var CPU_Mem = this.CPU_Mem;
     var start = this.start;
-
     for (i = 0; i < hosts.length; i++) {
         var host = hosts[i];
         var client = new net.Socket();
-
         clients.push(client);
-        client.connect(8091, host, function (client) {
+        client.connect(8091, host, function () {
             client.on('data', function (data) {
 
                 var splitted = data.toString().split('\n');
@@ -163,11 +161,11 @@ var createAndLaunchMonitors = function (hosts, clients) {
                 }
             });
 
-        }.bind({}, client));
-
-        client.on('error', function (err) {
-            console.log(err);
         });
+
+        client.on('error', function (host,err) {
+            console.log('monitor on \'' + host +'\' is not connected or is not working');
+        }.bind(null,host));
     }
 };
 
