@@ -50,7 +50,7 @@ var done = function () {
   var clients = this.clients;
 
   function writeAndClose(cpuMem) {
-    fs.readFile(DIR_MODULE + '/' + template + '.ejs', function (err, data) {
+    fs.readFile(DIR_MODULE + '/templates/' + template + '.ejs', function (err, data) {
 
       if (!err) {
 
