@@ -180,10 +180,10 @@
                     title: '<%= name %>',
                     xaxis: {
                         minorTickFreq: 4,
-                        title: '<%= Xaxis %>'
+                        title: '<%= xAxis %>'
                     },
                     yaxis: {
-                        title: '<%= Yaxis %>'
+                        title: '<%= yAxis %>'
                     },
                     grid: {
                         minorVerticalLines: true
@@ -321,7 +321,7 @@
         }
     }
 
-    <% if(!CPU_Mem) {%>
+    <% if(!cpuMem) {%>
 
         containerCPU.innerHTML = "<br/><div class='alert'>" +
                 "<strong>Warning</strong> No monitors found to get CPU" +
@@ -338,7 +338,7 @@
         var persCPU = [];
         var persMem = [];
 
-        var data = <%-CPU_Mem %>;
+        var data = <%- cpuMem %>;
         console.log(data);
         for (var hostAndName in data) {
             var cpu = [];

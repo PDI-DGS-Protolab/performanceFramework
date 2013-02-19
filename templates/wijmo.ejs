@@ -193,13 +193,13 @@
         $("#container").wijlinechart({
             axis: {
                 x: {
-                    text: '<%= Xaxis %>'
+                    text: '<%= xAxis %>'
                 },
                 y: {
                     min: 0,
                     autoMin: 0,
                     autoMinor: 0,
-                    text: '<%= Yaxis %>'
+                    text: '<%= yAxis %>'
                 }
             },
 
@@ -278,17 +278,18 @@
         })
     }
 
-     <% if(!CPU_Mem) {%>
+     <% if(!cpuMem) {%>
 
         containerCPU.innerHTML = "<br/><div class='alert'>" +
                 "<strong>Warning</strong> No monitors found" +
                 "</div>"
-                <% }else{ %>
+
+     <% }else{ %>
 
         var persCPU = [];
         var persMem = [];
 
-        var data = <%- CPU_Mem %>;
+        var data = <%- cpuMem %>;
         console.log(data);
         for (var hostAndName in data) {
             var cpu = [];
@@ -304,7 +305,7 @@
         }
         displayGraph(persCPU, 'CPU Graph', 'Time', 'Percentage', 0, 100, containerCPU);
         displayGraph(persMem, 'MEM Graph', 'Time', 'MB', null, null, containerMEM);
-    <% } %>
+     <% } %>
 
 
 </script>
