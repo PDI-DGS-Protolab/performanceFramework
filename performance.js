@@ -136,7 +136,7 @@ var createAndLaunchMonitors = function (hosts, clients) {
   'use strict';
 
   var i = 0;
-  var cpuMem = this.cpuMem;
+  var CPU_Mem = this.cpuMem;
   var start = this.start;
 
   for (i = 0; i < hosts.length; i++) {
@@ -144,7 +144,7 @@ var createAndLaunchMonitors = function (hosts, clients) {
     var client = new net.Socket();
 
     clients.push(client);
-    client.connect(8091, host, function (client) {
+    client.connect(8091, host, function () {
       client.on('data', function (data) {
 
         var splitted = data.toString().split('\n');
@@ -155,22 +155,23 @@ var createAndLaunchMonitors = function (hosts, clients) {
           var jsonData = JSON.parse(validData);
           var id = jsonData.host + '_' + jsonData.name + '_' + jsonData.pid;
 
-          if (!(cpuMem.hasOwnProperty(id))) {
-            cpuMem[id] = [];
+          if (!(CPU_Mem.hasOwnProperty(id))) {
+            CPU_Mem[id] = [];
           }
 
-          cpuMem[id].push({
+          CPU_Mem[id].push({
             host:jsonData.host, name:jsonData.name,
             pid:jsonData.pid, cpu:jsonData.cpu.percentage,
             memory:parseInt(jsonData.memory.value)
           });
         }
       });
-    }.bind({}, client));
 
-    client.on('error', function (err) {
-      console.log(err);
     });
+
+    client.on('error', function (host, err) {
+      console.log('monitor on \'' + host + '\' is not connected or is not working');
+    }.bind(null, host));
   }
 };
 
