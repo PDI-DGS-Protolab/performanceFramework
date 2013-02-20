@@ -22,7 +22,7 @@ There are two possible templates now: wijmo or bootstrap.
 
 In each benchmark, some tests can be created. To create a test you must run the following code:
 ```
-scenario.test(function(log,point){
+scenario.test(TEST NAME, function(log,point){
     //Your code here
 });
 ```
@@ -61,7 +61,7 @@ var pf = require('performanceFramework');
 //monitors on localhost and 192.168.1.65
 var scenario = pf.describe('TEST', 'This is an example...', 'wijmo', ['Petitions', 'Seconds'], ['localhost', '192.168.1.65'], '.'); 
 
-scenario.test(function(log,point){
+scenario.test('Example Test 1', function(log,point){
     log("20 petitions in 10 seconds");
     point(20,10);
     
@@ -86,7 +86,7 @@ var pf = require('performanceFramework');
 //without monitors
 var scenario = pf.describe('TEST', 'This is an example...', 'wijmo', ['Petitions', 'Seconds'], [], '.'); 
 
-scenario.test(function(log,point){
+scenario.test('Example Test 2', function(log,point){
     log("20 petitions in 10 seconds");
     point(20,10);
     
